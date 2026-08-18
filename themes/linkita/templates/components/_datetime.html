@@ -1,0 +1,51 @@
+{% component _datetime(value: string, _format, _timezone=none, lang) -%}
+  {%- if lang == "fr" and _format is string and _timezone is string -%}
+    {%- set formatted = value | date(format=_format, timezone=_timezone) -%}
+    {%- set month_long = value | date(format="%B", timezone=_timezone) -%}
+    {%- set month_short = value | date(format="%b", timezone=_timezone) -%}
+
+    {%- set months_long = [
+      "janvier", "février", "mars", "avril", "mai", "juin",
+      "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+    ] -%}
+
+    {%- set months_short = [
+      "janv.", "févr.", "mars", "avr.", "mai", "juin",
+      "juil.", "août", "sept.", "oct.", "nov.", "déc."
+    ] -%}
+
+    {{- formatted
+      | replace(from=month_long, to=months_long[value | date(format="%m", timezone=_timezone) | int - 1])
+      | replace(from=month_short, to=months_short[value | date(format="%m", timezone=_timezone) | int - 1])
+    -}}
+
+  {%- elif lang == "fr" and _format is string -%}
+    {%- set formatted = value | date(format=_format) -%}
+    {%- set month_long = value | date(format="%B") -%}
+    {%- set month_short = value | date(format="%b") -%}
+
+    {%- set months_long = [
+      "janvier", "février", "mars", "avril", "mai", "juin",
+      "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+    ] -%}
+
+    {%- set months_short = [
+      "janv.", "févr.", "mars", "avr.", "mai", "juin",
+      "juil.", "août", "sept.", "oct.", "nov.", "déc."
+    ] -%}
+
+    {{- formatted
+      | replace(from=month_long, to=months_long[value | date(format="%m") | int - 1])
+      | replace(from=month_short, to=months_short[value | date(format="%m") | int - 1])
+    -}}
+
+  {%- elif _format is string and _timezone is string -%}
+    {{- value | date(format=_format, timezone=_timezone) }}
+  {%- elif _format is string -%}
+    {{- value | date(format=_format) }}
+  {%- elif _timezone is string -%}
+    {{- value | date(timezone=_timezone) }}
+  {%- else -%}
+    {{- value | date() }}
+  {%- endif %}
+{%- endcomponent %}
